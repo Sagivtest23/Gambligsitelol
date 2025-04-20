@@ -1,0 +1,264 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GambleZone</title>
+  <style>
+    :root {
+      --bg-color-light: #f2f2f2;
+      --text-color-light: #222;
+      --bg-color-dark: #111;
+      --text-color-dark: #eee;
+      --accent: #6200ea;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      transition: background 0.3s, color 0.3s;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+    header {
+      text-align: center;
+      padding: 20px;
+    }
+    .stats, .games {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+    }
+    .card {
+      background: var(--card-bg);
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      flex: 1 1 280px;
+    }
+    button {
+      padding: 8px 16px;
+      border: none;
+      background: var(--accent);
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    select, input[type=number] {
+      padding: 5px;
+      width: 100%;
+      margin-top: 5px;
+    }
+    .dark {
+      background: var(--bg-color-dark);
+      color: var(--text-color-dark);
+    }
+    .dark .card {
+      background: #1c1c1c;
+    }
+    .light {
+      background: var(--bg-color-light);
+      color: var(--text-color-light);
+    }
+    .light .card {
+      background: white;
+    }
+  </style>
+</head>
+<body class="light">
+  <div class="container">
+    <header>
+      <h1>GambleZone</h1>
+      <button onclick="toggleTheme()">Toggle Light/Dark</button>
+      <p>Start gambling with 1500 points!</p>
+    </header>
+    <div class="stats card">
+      <p><strong>Points:</strong> <span id="points">1500</span></p>
+      <p><strong>Games Played:</strong> <span id="games">0</span></p>
+      <p><strong>Wins:</strong> <span id="wins">0</span> | <strong>Losses:</strong> <span id="losses">0</span></p>
+    </div>
+    <div class="games">
+      <div class="card">
+        <h3>1. Coin Flip</h3>
+        <label>Bet:</label><input type="number" id="cf-bet" value="100">
+        <select id="cf-choice">
+          <option value="heads">Heads</option>
+          <option value="tails">Tails</option>
+        </select>
+        <button onclick="coinFlip()">Flip Coin</button>
+      </div>
+      <div class="card">
+        <h3>2. Dice Roll</h3>
+        <label>Bet:</label><input type="number" id="dice-bet" value="100">
+        <button onclick="diceRoll()">Roll Dice (1-6)</button>
+      </div>
+      <div class="card">
+        <h3>3. High-Low</h3>
+        <label>Bet:</label><input type="number" id="hl-bet" value="100">
+        <select id="hl-choice">
+          <option value="high">High (&gt;5)</option>
+          <option value="low">Low (&lt;=5)</option>
+        </select>
+        <button onclick="highLow()">Play</button>
+      </div>
+      <div class="card">
+        <h3>4. Rock Paper Scissors</h3>
+        <label>Bet:</label><input type="number" id="rps-bet" value="100">
+        <select id="rps-choice">
+          <option value="rock">Rock</option>
+          <option value="paper">Paper</option>
+          <option value="scissors">Scissors</option>
+        </select>
+        <button onclick="rockPaperScissors()">Play</button>
+      </div>
+      <div class="card">
+        <h3>5. Lucky Number</h3>
+        <label>Bet:</label><input type="number" id="ln-bet" value="100">
+        <input type="number" id="ln-choice" placeholder="Pick 1-10">
+        <button onclick="luckyNumber()">Guess</button>
+      </div>
+      <div class="card">
+        <h3>6. Slot Machine</h3>
+        <label>Bet:</label><input type="number" id="slot-bet" value="100">
+        <button onclick="slotMachine()">Spin</button>
+      </div>
+      <div class="card">
+        <h3>7. Card Draw</h3>
+        <label>Bet:</label><input type="number" id="card-bet" value="100">
+        <button onclick="cardDraw()">Draw</button>
+      </div>
+      <div class="card">
+        <h3>8. Spinner Wheel</h3>
+        <label>Bet:</label><input type="number" id="wheel-bet" value="100">
+        <button onclick="spinnerWheel()">Spin</button>
+      </div>
+      <div class="card">
+        <h3>9. Blackjack Lite</h3>
+        <label>Bet:</label><input type="number" id="bj-bet" value="100">
+        <button onclick="blackjackLite()">Play</button>
+      </div>
+      <div class="card">
+        <h3>10. Multiplier Risk</h3>
+        <label>Bet:</label><input type="number" id="mult-bet" value="100">
+        <button onclick="multiplierGame()">Risk It</button>
+      </div>
+    </div>
+  </div>  <script>
+    let points = 1500, games = 0, wins = 0, losses = 0;
+
+    const updateStats = () => {
+      document.getElementById("points").innerText = points;
+      document.getElementById("games").innerText = games;
+      document.getElementById("wins").innerText = wins;
+      document.getElementById("losses").innerText = losses;
+    };
+
+    const play = (bet, win) => {
+      bet = parseInt(bet);
+      if (isNaN(bet) || bet <= 0 || bet > points) return alert("Invalid bet");
+      points -= bet;
+      games++;
+      if (win) {
+        points += bet * 2;
+        wins++;
+      } else losses++;
+      updateStats();
+    };
+
+    const coinFlip = () => {
+      const bet = document.getElementById("cf-bet").value;
+      const choice = document.getElementById("cf-choice").value;
+      const result = Math.random() < 0.5 ? "heads" : "tails";
+      play(bet, choice === result);
+    };
+
+    const diceRoll = () => {
+      const bet = document.getElementById("dice-bet").value;
+      const roll = Math.floor(Math.random() * 6) + 1;
+      play(bet, roll === 6);
+    };
+
+    const highLow = () => {
+      const bet = document.getElementById("hl-bet").value;
+      const choice = document.getElementById("hl-choice").value;
+      const roll = Math.floor(Math.random() * 10) + 1;
+      play(bet, (choice === "high" && roll > 5) || (choice === "low" && roll <= 5));
+    };
+
+    const rockPaperScissors = () => {
+      const bet = document.getElementById("rps-bet").value;
+      const user = document.getElementById("rps-choice").value;
+      const options = ["rock", "paper", "scissors"];
+      const cpu = options[Math.floor(Math.random() * 3)];
+      const win = (user === "rock" && cpu === "scissors") || (user === "paper" && cpu === "rock") || (user === "scissors" && cpu === "paper");
+      const draw = user === cpu;
+      if (draw) {
+        alert("Draw! No points lost.");
+      } else {
+        play(bet, win);
+      }
+    };
+
+    const luckyNumber = () => {
+      const bet = document.getElementById("ln-bet").value;
+      const pick = parseInt(document.getElementById("ln-choice").value);
+      const target = Math.floor(Math.random() * 10) + 1;
+      play(bet, pick === target);
+    };
+
+    const slotMachine = () => {
+      const bet = document.getElementById("slot-bet").value;
+      const a = Math.floor(Math.random() * 3), b = Math.floor(Math.random() * 3), c = Math.floor(Math.random() * 3);
+      play(bet, a === b && b === c);
+    };
+
+    const cardDraw = () => {
+      const bet = document.getElementById("card-bet").value;
+      const player = Math.floor(Math.random() * 13) + 1;
+      const cpu = Math.floor(Math.random() * 13) + 1;
+      play(bet, player > cpu);
+    };
+
+    const spinnerWheel = () => {
+      const bet = document.getElementById("wheel-bet").value;
+      const win = Math.random() < 0.3;
+      play(bet, win);
+    };
+
+    const blackjackLite = () => {
+      const bet = document.getElementById("bj-bet").value;
+      const player = Math.floor(Math.random() * 11) + 16;
+      const dealer = Math.floor(Math.random() * 11) + 16;
+      play(bet, player > dealer);
+    };
+
+    const multiplierGame = () => {
+      const bet = document.getElementById("mult-bet").value;
+      const win = Math.random() < 0.4;
+      const multi = Math.floor(Math.random() * 5) + 2;
+      if (win) {
+        points += parseInt(bet) * (multi - 1);
+        games++;
+        wins++;
+      } else {
+        points -= parseInt(bet);
+        games++;
+        losses++;
+      }
+      updateStats();
+    };
+
+    const toggleTheme = () => {
+      const body = document.body;
+      body.className = body.className === "dark" ? "light" : "dark";
+    };
+
+    updateStats();
+  </script></body>
+</html>
